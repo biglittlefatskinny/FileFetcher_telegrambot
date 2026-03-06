@@ -1,0 +1,38 @@
+[Unit]
+Description=File Fetcher Telegram Bot
+Documentation=https://github.com/your-org/file-fetcher-bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=filefetcher
+Group=filefetcher
+WorkingDirectory=/opt/file-fetcher-bot
+
+# Load secrets from a dedicated env file (chmod 600, owned by filefetcher)
+EnvironmentFile=/opt/file-fetcher-bot/.env
+
+# Run the bot
+ExecStart=/opt/file-fetcher-bot/.venv/bin/python -m filefetcher.main
+
+# Auto-restart on crash
+Restart=on-failure
+RestartSec=10s
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/opt/file-fetcher-bot /tmp
+
+# Logs appear in journald — view with: journalctl -u file-fetcher-bot -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=file-fetcher-bot
+
+[Install]
+WantedBy=multi-user.target
