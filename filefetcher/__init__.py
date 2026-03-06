@@ -1,0 +1,1 @@
+"""Open Sneak Bot package."""
